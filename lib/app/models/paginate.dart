@@ -1,7 +1,7 @@
 class PaginateItems<T> {
   final int currentPage;
-  final int? previousPage;
-  final int? nextPage;
+  final String? previousPage;
+  final String? nextPage;
   final int lastPage;
   final List<T> items;
 

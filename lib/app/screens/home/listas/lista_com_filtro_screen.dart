@@ -50,141 +50,171 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
         backgroundColor: AppColors.primary,
       ),
       body: BlocBuilder<DashboardBlocLogic, SessaoState>(
-        buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
-          if (state.carregando) {
+          if (state is SessaoCarregando) {
             return const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
-          if (state.sessoes.isEmpty) {
-            return const Center(child: Text('Nenhuma sessão encontrada.'));
+
+          if (state is SessaoError) {
+            return Center(
+              child: Text(
+                state.message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            );
           }
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
-              itemCount: state.sessoes.length,
-              itemBuilder: (_, index) {
-                final sessao = state.sessoes[index];
-                return Card(
-                  elevation: 8,
-                  borderOnForeground: true,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 8,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'teste',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
+          if (state is SessaoConcluida) {
+            if (state.sessoes.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Nenhuma sessão encontrada.',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              );
+            }
+
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: state.sessoes.length,
+                itemBuilder: (_, index) {
+                  final sessao = state.sessoes[index];
+                  return Card(
+                    elevation: 8,
+                    borderOnForeground: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        spacing: 8,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  sessao.titulo,
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                            ),
-                            if (sessao.previsao != null) ...[
+                              if (sessao.previsao != null) ...[
+                                Wrap(
+                                  alignment: WrapAlignment.center,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.schedule,
+                                      color: AppColors.primary,
+                                    ),
+                                    Text(
+                                      DateFormat(
+                                        'dd/mm/yyyy',
+                                      ).format(sessao.previsao!),
+                                      style: TextStyle(
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
                               Wrap(
-                                alignment: WrapAlignment.center,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.schedule,
-                                    color: AppColors.primary,
+                                spacing: 10,
+                                children: <Widget>[
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Wrap(
+                                      spacing: 2,
+                                      alignment: WrapAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.check,
+                                          color: AppColors.primary,
+                                        ),
+                                        Text(
+                                          'Confirmar',
+                                          style: TextStyle(
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Text(
-                                    DateFormat(
-                                      'dd/mm/yyyy',
-                                    ).format(sessao.previsao!),
-                                    style: TextStyle(color: AppColors.primary),
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      spacing: 2,
+                                      children: <Widget>[
+                                        Icon(Icons.edit, color: Colors.grey),
+                                        Text(
+                                          'Editar',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {},
+                                    child: Wrap(
+                                      spacing: 2,
+                                      alignment: WrapAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: <Widget>[
+                                        Icon(Icons.delete, color: Colors.red),
+                                        Text(
+                                          'Excluir',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.visibility),
+                              ),
                             ],
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Wrap(
-                              spacing: 10,
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () {},
-                                  child: Wrap(
-                                    spacing: 2,
-                                    alignment: WrapAlignment.center,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.check,
-                                        color: AppColors.primary,
-                                      ),
-                                      Text(
-                                        'Confirmar',
-                                        style: TextStyle(
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Wrap(
-                                    alignment: WrapAlignment.center,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    spacing: 2,
-                                    children: <Widget>[
-                                      Icon(Icons.edit, color: Colors.grey),
-                                      Text(
-                                        'Editar',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Wrap(
-                                    spacing: 2,
-                                    alignment: WrapAlignment.center,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.delete, color: Colors.red),
-                                      Text(
-                                        'Excluir',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.visibility),
-                            ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          );
+                  );
+                },
+              ),
+            );
+          }
+          return SizedBox.shrink();
+
+          /// Caso nada seja encontrado
         },
       ),
     );
