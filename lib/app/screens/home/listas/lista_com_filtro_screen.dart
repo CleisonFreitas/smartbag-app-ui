@@ -4,17 +4,21 @@ import 'package:intl/intl.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/events/dashboard_bloc_events.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/logic/dashboard_bloc_logic.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/states/sessao_state.dart';
+import 'package:mochila_de_viagem/app/enums/sessao_status_enum.dart';
 import 'package:mochila_de_viagem/app/helper/list_params.dart';
 import 'package:mochila_de_viagem/app/models/filtro.dart';
+import 'package:mochila_de_viagem/app/models/ordem.dart';
 import 'package:mochila_de_viagem/core/constants/app_colors.dart';
 
 class ListaComFiltroScreen extends StatefulWidget {
   final List<Filtro> filtros;
+  final List<Ordem> ordens;
   final String title;
 
   const ListaComFiltroScreen({
     super.key,
     required this.filtros,
+    required this.ordens,
     required this.title,
   });
 
@@ -29,7 +33,10 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
 
     if (!mounted) return;
     context.read<DashboardBlocLogic>().add(
-      LoadListEvent(ListParams(filtros: widget.filtros), true),
+      LoadListEvent(
+        ListParams(filtros: widget.filtros, ordens: widget.ordens),
+        true,
+      ),
     );
   }
 
@@ -91,6 +98,7 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                 itemBuilder: (_, index) {
                   final sessao = state.sessoes[index];
                   return Card(
+                    margin: EdgeInsets.symmetric(vertical: 10),
                     elevation: 8,
                     borderOnForeground: true,
                     child: Padding(
@@ -101,6 +109,21 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              sessao.status.tituloAmigavel,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    sessao.status == SessaoStatusEnum.pendente
+                                        ? Colors.orangeAccent
+                                        : Colors.lightGreen,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

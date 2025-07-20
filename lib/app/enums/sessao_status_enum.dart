@@ -6,4 +6,10 @@ enum SessaoStatusEnum {
   final String tituloAmigavel;
 
   const SessaoStatusEnum(this.titulo, this.tituloAmigavel);
+
+  static SessaoStatusEnum fromStatusInformado(String statusInformado) {
+    return SessaoStatusEnum.values.firstWhere(
+      (status) => status.titulo == statusInformado,
+    );
+  }
 }

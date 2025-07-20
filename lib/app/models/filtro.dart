@@ -1,6 +1,6 @@
 class Filtro {
   final String column;
-  final dynamic value;
+  final String value;
 
   Filtro(this.column, this.value);
 }

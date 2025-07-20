@@ -6,7 +6,7 @@ class Sessao {
   final String titulo;
   final SegmentoEnum segmentoEnum;
   final DateTime? previsao;
-  final SessaoStatusEnum? status;
+  final SessaoStatusEnum status;
   final int? usuarioId;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -28,10 +28,7 @@ class Sessao {
       previsao: DateTime.parse(json['previsao']),
       titulo: json['titulo'] ?? '',
       segmentoEnum: SegmentoEnum.fromTitulo(json['segmento']),
-      status: SessaoStatusEnum.values.firstWhere(
-        (e) => e.name == (json['status'] ?? '').toUpperCase(),
-        orElse: () => SessaoStatusEnum.pendente,
-      ),
+      status: SessaoStatusEnum.fromStatusInformado(json['status']),
       usuarioId: json['usuario_id'],
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
@@ -43,7 +40,7 @@ class Sessao {
       'id': id,
       'titulo': titulo,
       'segmento': segmentoEnum.titulo,
-      'status': status?.name,
+      'status': status,
       'previsao': previsao,
       'usuario_id': usuarioId,
     };

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/logic/dashboard_bloc_logic.dart';
 import 'package:mochila_de_viagem/app/enums/segmento_enum.dart';
 import 'package:mochila_de_viagem/app/models/filtro.dart';
+import 'package:mochila_de_viagem/app/models/ordem.dart';
 import 'package:mochila_de_viagem/app/screens/home/listas/lista_com_filtro_screen.dart';
 import 'package:mochila_de_viagem/app/shared/widgets/config_button.dart';
 import 'package:mochila_de_viagem/app/shared/widgets/main_card.dart';
@@ -95,6 +96,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     (segmento) => InkWell(
                       onTap: () {
                         final filtros = [Filtro('segmento', segmento.titulo)];
+                        final ordens = [Ordem('id', 'desc')];
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder:
@@ -102,6 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   value: _bloc,
                                   child: ListaComFiltroScreen(
                                     filtros: filtros,
+                                    ordens: ordens,
                                     title: segmento.tituloAmigavel,
                                   ),
                                 ),
