@@ -9,7 +9,10 @@ import 'package:mochila_de_viagem/app/enums/sessao_status_enum.dart';
 import 'package:mochila_de_viagem/app/helper/list_params.dart';
 import 'package:mochila_de_viagem/app/models/filtro.dart';
 import 'package:mochila_de_viagem/app/models/ordem.dart';
+import 'package:mochila_de_viagem/app/models/sessao.dart';
 import 'package:mochila_de_viagem/app/screens/home/listas/exibir_detalhes_da_tarefa.dart';
+import 'package:mochila_de_viagem/app/shared/widgets/config_dialog.dart';
+import 'package:mochila_de_viagem/app/shared/widgets/config_text_button.dart';
 import 'package:mochila_de_viagem/app/shared/widgets/exibir_detalhes.dart';
 import 'package:mochila_de_viagem/core/constants/app_colors.dart';
 
@@ -45,6 +48,36 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
         ListParams(filtros: widget.filtros, ordens: widget.ordens),
         true,
       ),
+    );
+  }
+
+  Widget _gerarBotaoAlterarStatus(
+    SessaoStatusEnum status,
+    bool isLoading,
+    Sessao sessao,
+    VoidCallback action,
+  ) {
+    IconData icon;
+    String titulo;
+    Color? cor;
+
+    if (status == SessaoStatusEnum.pendente) {
+      titulo = 'Confirmar';
+      icon = Icons.check;
+
+      cor = Colors.green;
+    } else {
+      titulo = 'Retomar';
+      icon = Icons.arrow_circle_left_outlined;
+      cor = AppColors.primary;
+    }
+
+    return ConfigTextButton(
+      titulo: titulo,
+      icone: icon,
+      cor: cor,
+      isLoading: isLoading,
+      onTap: action,
     );
   }
 
@@ -113,7 +146,7 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
               child: ListView.builder(
                 itemCount: state.sessoes.length,
                 itemBuilder: (_, index) {
-                  final sessao = state.sessoes[index];
+                  Sessao sessao = state.sessoes[index];
                   return Card(
                     margin: EdgeInsets.symmetric(vertical: 10),
                     elevation: 8,
@@ -183,26 +216,30 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                               Wrap(
                                 spacing: 10,
                                 children: <Widget>[
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Wrap(
-                                      spacing: 2,
-                                      alignment: WrapAlignment.center,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.check,
-                                          color: AppColors.primary,
+                                  _gerarBotaoAlterarStatus(
+                                    sessao.status,
+                                    state is SessaoItemCarregando,
+                                    sessao,
+                                    () {
+                                      // Esse método não funcionará
+                                      //caso o enum receba mais status
+                                      final status =
+                                          SessaoStatusEnum.values
+                                              .firstWhere(
+                                                (statusSessao) =>
+                                                    statusSessao.titulo !=
+                                                    sessao.status.titulo,
+                                              )
+                                              .titulo;
+
+                                      widget.bloc.add(
+                                        AlterarStatusTaskEvent(
+                                          sessao.id!,
+                                          status,
                                         ),
-                                        Text(
-                                          'Confirmar',
-                                          style: TextStyle(
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      );
+                                      _aoAtualizarListagem();
+                                    },
                                   ),
                                   InkWell(
                                     onTap:
@@ -231,21 +268,23 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                                       ],
                                     ),
                                   ),
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Wrap(
-                                      spacing: 2,
-                                      alignment: WrapAlignment.center,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: <Widget>[
-                                        Icon(Icons.delete, color: Colors.red),
-                                        Text(
-                                          'Excluir',
-                                          style: TextStyle(color: Colors.red),
+                                  ConfigTextButton(
+                                    titulo: 'Excluir',
+                                    icone: Icons.check,
+                                    cor: AppColors.previsaoAlert,
+                                    onTap:
+                                        () => ConfigDialog.showDialogDanger(
+                                          context,
+                                          'Esse item será excluído permanentemente. Deseja prosseguir?',
+                                          () {
+                                            widget.bloc.add(
+                                              RemoverTaskEvent(sessao.id!),
+                                            );
+                                            Navigator.of(context).pop();
+                                            _aoAtualizarListagem();
+                                          },
+                                          state is SessaoCarregando,
                                         ),
-                                      ],
-                                    ),
                                   ),
                                 ],
                               ),

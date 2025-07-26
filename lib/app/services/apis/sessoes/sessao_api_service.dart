@@ -29,4 +29,17 @@ class SessaoApiService {
       (json) => Sessao.fromJson(json),
     );
   }
+
+  Future<void> alterarStatus(int sessaoId, String status) async {
+    final response = await _dio.sessao.patch(
+      '/sessoes/$sessaoId/alterar-status',
+      data: {'status': status},
+    );
+    return response.data;
+  }
+
+  Future<void> remover(int sessaoId) async {
+    final response = await _dio.sessao.delete('/sessoes/$sessaoId');
+    return response.data;
+  }
 }

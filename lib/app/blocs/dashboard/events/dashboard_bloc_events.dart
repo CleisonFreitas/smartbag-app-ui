@@ -19,3 +19,14 @@ class AtualizarTaskEvent extends DashboardBlocEvents {
   final Sessao sessao;
   AtualizarTaskEvent(this.sessao);
 }
+
+class AlterarStatusTaskEvent extends DashboardBlocEvents {
+  final int sessaoId;
+  final String status;
+  AlterarStatusTaskEvent(this.sessaoId, this.status);
+}
+
+class RemoverTaskEvent extends DashboardBlocEvents {
+  final int sessaoId;
+  RemoverTaskEvent(this.sessaoId);
+}

@@ -13,6 +13,8 @@ class DashboardBlocLogic extends Bloc<DashboardBlocEvents, SessaoState> {
     on<LoadListEvent>(_onLoadList);
     on<CadastrarTaskEvent>(_onCreateTask);
     on<AtualizarTaskEvent>(_onUpdateTask);
+    on<AlterarStatusTaskEvent>(_onChangeToPending);
+    on<RemoverTaskEvent>(_onDeleteTask);
   }
 
   Future<void> _onLoadList(LoadListEvent event, Emitter emit) async {
@@ -58,6 +60,39 @@ class DashboardBlocLogic extends Bloc<DashboardBlocEvents, SessaoState> {
       emit(SessaoError(message));
     } catch (e) {
       emit(SessaoError(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteTask(RemoverTaskEvent event, Emitter emit) async {
+    emit(SessaoCarregando());
+
+    try {
+      await _sessaoService.remover(event.sessaoId);
+      emit(SessaoFinalizada(event.sessaoId));
+    } on DioException catch (e) {
+      final message = e.toString();
+      emit(SessaoError(message));
+    } catch (e) {
+      final message = e.toString();
+      emit(SessaoError(message));
+    }
+  }
+
+  Future<void> _onChangeToPending(
+    AlterarStatusTaskEvent event,
+    Emitter emit,
+  ) async {
+    emit(SessaoItemCarregando());
+
+    try {
+      await _sessaoService.alterarStatus(event.sessaoId, event.status);
+      emit(SessaoFinalizada(event.sessaoId));
+    } on DioException catch (e) {
+      final message = e.toString();
+      emit(SessaoError(message));
+    } catch (e) {
+      final message = e.toString();
+      emit(SessaoError(message));
     }
   }
 }

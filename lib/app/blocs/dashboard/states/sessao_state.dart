@@ -7,6 +7,8 @@ class SessaoInicial extends SessaoState {}
 
 class SessaoCarregando extends SessaoState {}
 
+class SessaoItemCarregando extends SessaoState {}
+
 // Utilizada para conclusão de forms
 class SessaoFinalizada extends SessaoState {
   final dynamic response;
