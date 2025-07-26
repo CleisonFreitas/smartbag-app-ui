@@ -4,22 +4,27 @@ import 'package:intl/intl.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/events/dashboard_bloc_events.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/logic/dashboard_bloc_logic.dart';
 import 'package:mochila_de_viagem/app/blocs/dashboard/states/sessao_state.dart';
+import 'package:mochila_de_viagem/app/enums/segmento_enum.dart';
 import 'package:mochila_de_viagem/app/enums/sessao_status_enum.dart';
 import 'package:mochila_de_viagem/app/helper/list_params.dart';
 import 'package:mochila_de_viagem/app/models/filtro.dart';
 import 'package:mochila_de_viagem/app/models/ordem.dart';
+import 'package:mochila_de_viagem/app/screens/home/listas/exibir_detalhes_da_tarefa.dart';
+import 'package:mochila_de_viagem/app/shared/widgets/exibir_detalhes.dart';
 import 'package:mochila_de_viagem/core/constants/app_colors.dart';
 
 class ListaComFiltroScreen extends StatefulWidget {
   final List<Filtro> filtros;
   final List<Ordem> ordens;
-  final String title;
+  final SegmentoEnum segmentoEnum;
+  final DashboardBlocLogic bloc;
 
   const ListaComFiltroScreen({
     super.key,
     required this.filtros,
     required this.ordens,
-    required this.title,
+    required this.segmentoEnum,
+    required this.bloc,
   });
 
   @override
@@ -31,8 +36,11 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
   void initState() {
     super.initState();
 
-    if (!mounted) return;
-    context.read<DashboardBlocLogic>().add(
+    _aoAtualizarListagem();
+  }
+
+  void _aoAtualizarListagem() {
+    widget.bloc.add(
       LoadListEvent(
         ListParams(filtros: widget.filtros, ordens: widget.ordens),
         true,
@@ -45,13 +53,22 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          ExibirDetalhes.exibirModal(
+            context,
+            ExibirDetalhesDaTarefa(
+              segmento: widget.segmentoEnum.titulo,
+              bloc: widget.bloc,
+              aoAtualizarDados: _aoAtualizarListagem,
+            ),
+          );
+        },
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.secondary,
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.segmentoEnum.tituloAmigavel),
         centerTitle: true,
         foregroundColor: Colors.white,
         backgroundColor: AppColors.primary,
@@ -148,7 +165,7 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                                     ),
                                     Text(
                                       DateFormat(
-                                        'dd/mm/yyyy',
+                                        'dd/MM/yyyy',
                                       ).format(sessao.previsao!),
                                       style: TextStyle(
                                         color: AppColors.primary,
@@ -188,7 +205,18 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () {},
+                                    onTap:
+                                        () => ExibirDetalhes.exibirModal(
+                                          context,
+                                          ExibirDetalhesDaTarefa(
+                                            sessao: sessao,
+                                            segmento:
+                                                widget.segmentoEnum.titulo,
+                                            bloc: widget.bloc,
+                                            aoAtualizarDados:
+                                                _aoAtualizarListagem,
+                                          ),
+                                        ),
                                     child: Wrap(
                                       alignment: WrapAlignment.center,
                                       crossAxisAlignment:
@@ -222,7 +250,17 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
                                 ],
                               ),
                               IconButton(
-                                onPressed: () {},
+                                onPressed:
+                                    () => ExibirDetalhes.exibirModal(
+                                      context,
+                                      ExibirDetalhesDaTarefa(
+                                        sessao: sessao,
+                                        somenteVisualizacao: true,
+                                        segmento: widget.segmentoEnum.titulo,
+                                        bloc: widget.bloc,
+                                        aoAtualizarDados: _aoAtualizarListagem,
+                                      ),
+                                    ),
                                 icon: Icon(Icons.visibility),
                               ),
                             ],
@@ -235,9 +273,9 @@ class _ListaComFiltroScreenState extends State<ListaComFiltroScreen> {
               ),
             );
           }
-          return SizedBox.shrink();
 
           /// Caso nada seja encontrado
+          return SizedBox.shrink();
         },
       ),
     );

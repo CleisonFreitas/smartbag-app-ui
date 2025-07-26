@@ -11,11 +11,12 @@ class DashboardBlocLogic extends Bloc<DashboardBlocEvents, SessaoState> {
   final _sessaoService = SessaoApiService();
   DashboardBlocLogic() : super(SessaoInicial()) {
     on<LoadListEvent>(_onLoadList);
+    on<CadastrarTaskEvent>(_onCreateTask);
+    on<AtualizarTaskEvent>(_onUpdateTask);
   }
 
   Future<void> _onLoadList(LoadListEvent event, Emitter emit) async {
     emit(SessaoCarregando());
-
     try {
       final data = await _sessaoService.buscar(event.params);
       emit(
@@ -28,6 +29,32 @@ class DashboardBlocLogic extends Bloc<DashboardBlocEvents, SessaoState> {
     } on DioException catch (e) {
       final message = formatarErroValidacao(e);
 
+      emit(SessaoError(message));
+    } catch (e) {
+      emit(SessaoError(e.toString()));
+    }
+  }
+
+  Future<void> _onCreateTask(CadastrarTaskEvent event, Emitter emit) async {
+    emit(SessaoCarregando());
+    try {
+      final data = await _sessaoService.cadastrar(event.sessao);
+      emit(SessaoFinalizada(data));
+    } on DioException catch (e) {
+      final message = formatarErroValidacao(e);
+      emit(SessaoError(message));
+    } catch (e) {
+      emit(SessaoError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateTask(AtualizarTaskEvent event, Emitter emit) async {
+    emit(SessaoCarregando());
+    try {
+      final data = await _sessaoService.atualizar(event.sessao);
+      emit(SessaoFinalizada(data));
+    } on DioException catch (e) {
+      final message = formatarErroValidacao(e);
       emit(SessaoError(message));
     } catch (e) {
       emit(SessaoError(e.toString()));

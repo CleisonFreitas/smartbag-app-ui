@@ -24,9 +24,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void initState() {
-    /* _clienteToken.then(
-      (clienteValue) => _cliente = Cliente.fromJson(jsonDecode(clienteValue)),
-    ); */
     _bloc = context.read<DashboardBlocLogic>();
     super.initState();
   }
@@ -105,7 +102,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   child: ListaComFiltroScreen(
                                     filtros: filtros,
                                     ordens: ordens,
-                                    title: segmento.tituloAmigavel,
+                                    segmentoEnum: segmento,
+                                    bloc: _bloc,
                                   ),
                                 ),
                           ),

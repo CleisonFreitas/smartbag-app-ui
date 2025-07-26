@@ -7,8 +7,13 @@ class SessaoApiService {
   final _dio = DioApi();
 
   Future<dynamic> cadastrar(Sessao sessao) async {
-    final response = await _dio.sessao.post(
-      '/api/v1/sessoes',
+    final response = await _dio.sessao.post('/sessoes', data: sessao.toJson());
+    return response.data;
+  }
+
+  Future<dynamic> atualizar(Sessao sessao) async {
+    final response = await _dio.sessao.put(
+      '/sessoes/${sessao.id}',
       data: sessao.toJson(),
     );
     return response.data;

@@ -7,6 +7,12 @@ class SessaoInicial extends SessaoState {}
 
 class SessaoCarregando extends SessaoState {}
 
+// Utilizada para conclusão de forms
+class SessaoFinalizada extends SessaoState {
+  final dynamic response;
+  SessaoFinalizada(this.response);
+}
+
 class SessaoConcluida extends SessaoState {
   final List<Sessao> sessoes;
   final bool ultimaPagina;

@@ -7,9 +7,10 @@ enum SessaoStatusEnum {
 
   const SessaoStatusEnum(this.titulo, this.tituloAmigavel);
 
-  static SessaoStatusEnum fromStatusInformado(String statusInformado) {
+  static SessaoStatusEnum fromStatusInformado(String? statusInformado) {
     return SessaoStatusEnum.values.firstWhere(
       (status) => status.titulo == statusInformado,
+      orElse: () => SessaoStatusEnum.pendente,
     );
   }
 }
